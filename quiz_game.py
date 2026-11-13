@@ -47,14 +47,44 @@ class QuizGame:
         for i, quiz in enumerate(self.quizzes, start=1):
             print(f"  {i}. {quiz.question}")
 
+    def play(self):
+        """퀴즈를 하나씩 풀고, 맞힌 개수를 점수로 계산한다."""
+        score = 0
+        for quiz in self.quizzes:
+            quiz.show()
+            try:
+                user_answer = int(input("정답 번호: "))
+            except ValueError:
+                # 숫자가 아닌 값을 입력하면 오답으로 처리
+                user_answer = 0
+
+            if quiz.is_correct(user_answer):
+                print("정답입니다! ✅")
+                score += 1
+            else:
+                print(f"틀렸습니다! ❌ 정답은 {quiz.answer}번입니다.")
+
+        print(f"\n결과: {len(self.quizzes)}개 중 {score}개 정답!")
+        if score > self.best_score:
+            self.best_score = score
+            print("🎉 최고 점수를 갱신했습니다!")
+
+    def show_score(self):
+        """최고 점수를 출력한다."""
+        print(f"\n최고 점수: {self.best_score}점")
+
     def run(self):
         """메뉴를 반복해서 보여주고, 선택한 번호에 맞게 동작한다."""
         while True:
             self.show_menu()
             choice = input("번호를 선택하세요: ")
 
-            if choice == "3":
+            if choice == "1":
+                self.play()
+            elif choice == "3":
                 self.show_quiz_list()
+            elif choice == "4":
+                self.show_score()
             elif choice == "5":
                 print("게임을 종료합니다.")
                 break
