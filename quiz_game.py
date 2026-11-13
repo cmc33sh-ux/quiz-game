@@ -1,3 +1,8 @@
+import json
+
+STATE_FILE = "state.json"
+
+
 class Quiz:
     """퀴즈 1개를 표현하는 클래스."""
 
@@ -16,6 +21,19 @@ class Quiz:
     def is_correct(self, user_answer):
         """사용자가 고른 번호가 정답이면 True, 아니면 False를 반환한다."""
         return user_answer == self.answer
+
+    def to_dict(self):
+        """JSON으로 저장할 수 있도록 dict로 바꾼다."""
+        return {
+            "question": self.question,
+            "choices": self.choices,
+            "answer": self.answer,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """dict에서 Quiz 객체를 다시 만든다."""
+        return cls(data["question"], data["choices"], data["answer"])
 
 
 class QuizGame:
