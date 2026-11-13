@@ -69,6 +69,30 @@ class QuizGame:
             self.best_score = score
             print("🎉 최고 점수를 갱신했습니다!")
 
+    def add_quiz(self):
+        """사용자에게 문제, 보기 4개, 정답 번호를 입력받아 퀴즈를 추가한다."""
+        question = input("\n문제를 입력하세요: ").strip()
+        if not question:
+            print("문제가 비어 있어 취소합니다.")
+            return
+
+        choices = []
+        for i in range(1, 5):
+            choices.append(input(f"보기 {i}: ").strip())
+
+        try:
+            answer = int(input("정답 번호(1~4): "))
+        except ValueError:
+            print("숫자를 입력해야 합니다. 퀴즈 추가를 취소합니다.")
+            return
+
+        if answer < 1 or answer > 4:
+            print("정답 번호는 1~4 사이여야 합니다. 퀴즈 추가를 취소합니다.")
+            return
+
+        self.quizzes.append(Quiz(question, choices, answer))
+        print("퀴즈가 추가되었습니다!")
+
     def show_score(self):
         """최고 점수를 출력한다."""
         print(f"\n최고 점수: {self.best_score}점")
@@ -81,6 +105,8 @@ class QuizGame:
 
             if choice == "1":
                 self.play()
+            elif choice == "2":
+                self.add_quiz()
             elif choice == "3":
                 self.show_quiz_list()
             elif choice == "4":
