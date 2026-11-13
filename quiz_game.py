@@ -18,9 +18,50 @@ class Quiz:
         return user_answer == self.answer
 
 
+class QuizGame:
+    """퀴즈 게임 전체를 관리하는 클래스."""
+
+    def __init__(self):
+        # 기본 퀴즈 5개 (주제: 상식)
+        self.quizzes = [
+            Quiz("대한민국의 수도는?", ["부산", "서울", "대구", "인천"], 2),
+            Quiz("태양계에서 가장 큰 행성은?", ["지구", "화성", "목성", "토성"], 3),
+            Quiz("물의 화학식은?", ["CO2", "H2O", "O2", "NaCl"], 2),
+            Quiz("1년은 몇 개월일까?", ["10개월", "11개월", "12개월", "13개월"], 3),
+            Quiz("무지개는 몇 가지 색일까?", ["5색", "6색", "7색", "8색"], 3),
+        ]
+        self.best_score = 0
+
+    def show_menu(self):
+        """메뉴를 출력한다."""
+        print("\n===== 퀴즈 게임 =====")
+        print("1. 퀴즈 풀기")
+        print("2. 퀴즈 추가")
+        print("3. 퀴즈 목록")
+        print("4. 점수 확인")
+        print("5. 종료")
+
+    def show_quiz_list(self):
+        """등록된 퀴즈 목록을 출력한다."""
+        print(f"\n[퀴즈 목록] 총 {len(self.quizzes)}개")
+        for i, quiz in enumerate(self.quizzes, start=1):
+            print(f"  {i}. {quiz.question}")
+
+    def run(self):
+        """메뉴를 반복해서 보여주고, 선택한 번호에 맞게 동작한다."""
+        while True:
+            self.show_menu()
+            choice = input("번호를 선택하세요: ")
+
+            if choice == "3":
+                self.show_quiz_list()
+            elif choice == "5":
+                print("게임을 종료합니다.")
+                break
+            else:
+                print("아직 준비 중이거나 잘못된 번호입니다.")
+
+
 if __name__ == "__main__":
-    # 직접 실행했을 때만 동작하는 간단한 확인용 코드
-    quiz = Quiz("대한민국의 수도는?", ["부산", "서울", "대구", "인천"], 2)
-    quiz.show()
-    print(quiz.is_correct(2))
-    print(quiz.is_correct(1))
+    game = QuizGame()
+    game.run()
