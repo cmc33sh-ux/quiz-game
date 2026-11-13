@@ -146,7 +146,7 @@ class QuizGame:
         """메뉴를 반복해서 보여주고, 선택한 번호에 맞게 동작한다."""
         while True:
             self.show_menu()
-            choice = input("번호를 선택하세요: ")
+            choice = input("번호를 선택하세요: ").strip()  # 앞뒤 공백 무시
 
             if choice == "1":
                 self.play()
