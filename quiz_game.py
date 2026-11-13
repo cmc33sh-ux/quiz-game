@@ -1,3 +1,8 @@
+import json
+
+STATE_FILE = "state.json"
+
+
 class Quiz:
     """퀴즈 1개를 표현하는 클래스."""
 
@@ -17,6 +22,19 @@ class Quiz:
         """사용자가 고른 번호가 정답이면 True, 아니면 False를 반환한다."""
         return user_answer == self.answer
 
+    def to_dict(self):
+        """JSON으로 저장할 수 있도록 dict로 바꾼다."""
+        return {
+            "question": self.question,
+            "choices": self.choices,
+            "answer": self.answer,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """dict에서 Quiz 객체를 다시 만든다."""
+        return cls(data["question"], data["choices"], data["answer"])
+
 
 class QuizGame:
     """퀴즈 게임 전체를 관리하는 클래스."""
@@ -31,6 +49,31 @@ class QuizGame:
             Quiz("무지개는 몇 가지 색일까?", ["5색", "6색", "7색", "8색"], 3),
         ]
         self.best_score = 0
+        self.load_state()  # state.json이 있으면 저장된 데이터로 덮어쓴다
+
+    def save_state(self):
+        """퀴즈 목록과 최고 점수를 state.json에 UTF-8로 저장한다."""
+        data = {
+            "best_score": self.best_score,
+            "quizzes": [quiz.to_dict() for quiz in self.quizzes],
+        }
+        try:
+            with open(STATE_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except OSError as e:
+            print(f"저장 중 오류가 발생했습니다: {e}")
+
+    def load_state(self):
+        """state.json이 있으면 불러온다. 없거나 깨져 있으면 기본값을 그대로 쓴다."""
+        try:
+            with open(STATE_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            self.quizzes = [Quiz.from_dict(item) for item in data["quizzes"]]
+            self.best_score = data["best_score"]
+        except FileNotFoundError:
+            pass  # 처음 실행: 기본 퀴즈 사용
+        except (json.JSONDecodeError, KeyError, TypeError):
+            print("저장 파일이 손상되어 기본 데이터로 시작합니다.")
 
     def show_menu(self):
         """메뉴를 출력한다."""
@@ -67,6 +110,7 @@ class QuizGame:
         print(f"\n결과: {len(self.quizzes)}개 중 {score}개 정답!")
         if score > self.best_score:
             self.best_score = score
+            self.save_state()
             print("🎉 최고 점수를 갱신했습니다!")
 
     def add_quiz(self):
@@ -91,6 +135,7 @@ class QuizGame:
             return
 
         self.quizzes.append(Quiz(question, choices, answer))
+        self.save_state()
         print("퀴즈가 추가되었습니다!")
 
     def show_score(self):
